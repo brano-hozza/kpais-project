@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.AnchorPane?>
+<AnchorPane prefHeight="400.0" prefWidth="600.0" styleClass="bg" xmlns="http://javafx.com/javafx/11.0.1"
+            xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.brano.oop2.controllers.RegisterController">
+    <Button layoutX="26.0" layoutY="17.0" mnemonicParsing="false" onAction="#gotoLogin" styleClass="secondary"
+            text="Späť na prihlásenie"/>
+    <Label alignment="CENTER" layoutX="220.0" layoutY="29.0" prefHeight="47.0" prefWidth="162.0" styleClass="h1"
+           text="Registrácia"/>
+    <Label layoutX="131.0" layoutY="89.0" text="Prihlasovacie meno"/>
+    <TextField fx:id="username" layoutX="131.0" layoutY="112.0" promptText="Prihlasovacie meno"/>
+    <Label layoutX="131.0" layoutY="150.0" prefHeight="17.0" prefWidth="103.0" text="Heslo"/>
+    <TextField fx:id="password" accessibleRole="PASSWORD_FIELD" layoutX="131.0" layoutY="175.0" promptText="Heslo"/>
+    <Label layoutX="131.0" layoutY="207.0" prefHeight="17.0" prefWidth="103.0" text="Heslo znova"/>
+    <TextField fx:id="passwordAgain" accessibleRole="PASSWORD_FIELD" layoutX="131.0" layoutY="230.0"
+               promptText="Heslo znova"/>
+    <Button layoutX="224.0" layoutY="279.0" mnemonicParsing="false" onAction="#register" prefHeight="59.0"
+            prefWidth="155.0" styleClass="big-btn" text="Register"/>
+    <Label layoutX="330.0" layoutY="92.0" text="Mesto"/>
+    <TextField fx:id="city" layoutX="330.0" layoutY="115.0" promptText="Mesto"/>
+    <Label layoutX="330.0" layoutY="153.0" prefHeight="17.0" prefWidth="103.0" text="Ulica"/>
+    <TextField fx:id="street" accessibleRole="PASSWORD_FIELD" layoutX="330.0" layoutY="178.0" promptText="Ulica"/>
+    <Label layoutX="330.0" layoutY="210.0" prefHeight="17.0" prefWidth="103.0" text="Cislo"/>
+    <TextField fx:id="number" accessibleRole="PASSWORD_FIELD" layoutX="330.0" layoutY="233.0" promptText="Cislo ulice"/>
+</AnchorPane>

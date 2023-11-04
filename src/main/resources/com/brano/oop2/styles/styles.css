@@ -1,0 +1,108 @@
+.root {
+    -fx-primary: #BB86FC;
+    -fx-secondary: #03DAC5;
+    -fx-error: #ff0000;
+    -fx-text: #FFFFFF;
+    -fx-text-sec: #6d6d6d;
+    -fx-bg: #282D33;
+    -fx-bg-sec: #34383c;
+    -fx-btn-text: #000000;
+    -fx-font-family: "Segoe UI", "Arial";
+}
+
+.label {
+    -fx-text-fill: -fx-text;
+}
+
+.text {
+    -fx-text-fill: -fx-text;
+}
+
+.text-field {
+    -fx-background-color: -fx-bg-sec;
+    -fx-text-fill: -fx-text;
+    -fx-highlight-text-fill: -fx-text;
+    -fx-prompt-text-fill: -fx-text-sec;
+}
+
+.button {
+    -fx-background-color: -fx-primary;
+    -fx-text-fill: -fx-btn-text;
+}
+
+.choice-box {
+    -fx-background-color: -fx-bg-sec;
+}
+
+.choice-box .context-menu {
+    -fx-background-color: -fx-bg-sec;
+}
+
+.choice-box .menu-item:focused {
+    -fx-background-color: -fx-bg;
+}
+
+.choice-box .menu-item > .label {
+    -fx-text-fill: -fx-text;
+}
+
+.choice-box .menu-item:focused > .label {
+    -fx-text-fill: -fx-primary;
+}
+
+.indexed-cell {
+    -fx-background-color: -fx-bg;
+    -fx-text-fill: -fx-text;
+}
+
+.indexed-cell:even {
+    -fx-background-color: -fx-bg-sec;
+
+}
+
+
+.table-view .column-header .label {
+    -fx-text-fill: -fx-text-sec;
+    -fx-font-weight: bold;
+}
+
+.bg {
+    -fx-background-color: -fx-bg;
+}
+
+.primary {
+    -fx-background-color: -fx-primary;
+}
+
+.primary-text {
+    -fx-text-fill: -fx-primary;
+}
+
+.secondary {
+    -fx-background-color: -fx-secondary;
+}
+
+.secondary-text {
+    -fx-text-fill: -fx-secondary;
+}
+
+.error {
+    -fx-text-fill: -fx-error;
+}
+
+.h1 {
+    -fx-font-size: 23px;
+}
+
+.h2 {
+    -fx-font-size: 17px;
+}
+
+.big-btn {
+    -fx-font-weight: bold;
+    -fx-font-size: 20px;
+}
+
+.options-icon {
+    -fx-graphic: url("../img/options.png");
+}

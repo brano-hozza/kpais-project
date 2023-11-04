@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.Cursor?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<AnchorPane xmlns:fx="http://javafx.com/fxml/1" onKeyPressed="#checkKey" prefHeight="296.0" prefWidth="375.0"
+            styleClass="bg" xmlns="http://javafx.com/javafx/11.0.1"
+            fx:controller="com.brano.oop2.controllers.LoginController">
+    <cursor>
+        <Cursor fx:constant="DEFAULT"/>
+    </cursor>
+
+    <ImageView fitHeight="150.0" fitWidth="200.0" layoutX="88.0" layoutY="14.0" pickOnBounds="true"
+               preserveRatio="true">
+        <Image url="@../img/logo.jpg"/>
+    </ImageView>
+    <TextField fx:id="usernameInput" layoutX="104.0" layoutY="151.0" minWidth="-Infinity" prefHeight="25.0"
+               prefWidth="168.0" promptText="Meno"/>
+    <PasswordField fx:id="passwordInput" layoutX="104.0" layoutY="188.0" prefHeight="25.0" prefWidth="168.0"
+                   promptText="Heslo"/>
+    <Button alignment="CENTER" layoutX="127.0" layoutY="227.0" mnemonicParsing="false" onAction="#login"
+            prefHeight="23.0" prefWidth="122.0" text="Prihlásiť">
+        <cursor>
+            <Cursor fx:constant="HAND"/>
+        </cursor>
+    </Button>
+    <Label alignment="CENTER" layoutX="119.0" layoutY="128.0" prefHeight="17.0" prefWidth="138.0" styleClass="h2"
+           text="Prihlásenie"/>
+    <Label layoutX="105.0" layoutY="259.0" text="Nemáte účet? Registrujte sa"/>
+    <Label layoutX="260.0" layoutY="259.0" onMouseClicked="#gotoRegister" styleClass="secondary-text" text="tu!"/>
+</AnchorPane>

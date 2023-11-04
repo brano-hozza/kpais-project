@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
+<AnchorPane prefHeight="441.0" prefWidth="447.0" styleClass="bg" xmlns="http://javafx.com/javafx/11.0.1"
+            xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.brano.oop2.controllers.NewTaskController">
+    <Button contentDisplay="CENTER" layoutX="14.0" layoutY="14.0" mnemonicParsing="false" onAction="#options"
+            styleClass="options-icon"/>
+    <Button layoutX="344.0" layoutY="14.0" mnemonicParsing="false" text="Spat na ulohy" onAction="#gotoTasks"
+            styleClass="secondary"/>
+    <Label layoutX="162.0" layoutY="27.0" text="Nová úloha">
+        <font>
+            <Font name="System Bold" size="23.0"/>
+        </font>
+    </Label>
+    <AnchorPane fx:id="addPanel" layoutX="53.0" layoutY="61.0" prefHeight="351.0" prefWidth="344.0">
+        <Label alignment="CENTER_RIGHT" layoutX="40.0" layoutY="14.0" prefHeight="17.0" prefWidth="96.0"
+               text="Project:"/>
+        <Label fx:id="project_name" layoutX="144.0" layoutY="14.0" prefHeight="17.0" prefWidth="160.0"
+               text="project_name"/>
+
+        <Label alignment="CENTER_RIGHT" layoutX="41.0" layoutY="42.0" prefHeight="17.0" prefWidth="96.0"
+               text="Manazer:"/>
+        <Label fx:id="manager_name" layoutX="143.0" layoutY="42.0" prefHeight="17.0" prefWidth="160.0"
+               text="manager_name"/>
+
+        <Label alignment="CENTER_RIGHT" layoutX="42.0" layoutY="75.0" prefHeight="17.0" prefWidth="96.0"
+               text="Developer:"/>
+        <ChoiceBox fx:id="developer" layoutX="143.0" layoutY="72.0" prefHeight="25.0" prefWidth="160.0"/>
+
+        <Label alignment="CENTER_RIGHT" layoutX="42.0" layoutY="117.0" prefHeight="17.0" prefWidth="96.0"
+               text="Názov:"/>
+        <TextField fx:id="task_name" layoutX="143.0" layoutY="113.0" prefHeight="25.0" prefWidth="160.0"
+                   promptText="Názov úlohy"/>
+
+        <Label alignment="CENTER_RIGHT" layoutX="42.0" layoutY="161.0" prefHeight="17.0" prefWidth="96.0"
+               text="Typ úlohy:"/>
+        <ChoiceBox fx:id="task_type" layoutX="143.0" layoutY="158.0" prefHeight="25.0" prefWidth="160.0"/>
+
+        <Label alignment="CENTER_RIGHT" layoutX="42.0" layoutY="209.0" prefHeight="17.0" prefWidth="96.0"
+               text="Deadline:"/>
+        <DatePicker fx:id="end_date" layoutX="143.0" layoutY="205.0" prefHeight="25.0" prefWidth="160.0"/>
+
+        <Button layoutX="92.0" layoutY="267.0" mnemonicParsing="false" onAction="#createTask" prefHeight="66.0"
+                prefWidth="160.0" styleClass="big-btn" text="Vytvoriť" underline="true">
+            <font>
+                <Font name="System Bold" size="22.0"/>
+            </font>
+        </Button>
+    </AnchorPane>
+
+</AnchorPane>

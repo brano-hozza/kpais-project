@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
+<AnchorPane prefHeight="353.0" prefWidth="447.0" styleClass="bg" xmlns="http://javafx.com/javafx/15.0.1"
+            xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.brano.oop2.controllers.NewDealController">
+    <Button contentDisplay="CENTER" layoutX="14.0" layoutY="14.0" mnemonicParsing="false" onAction="#options"
+            styleClass="options-icon"/>
+    <Label layoutX="131.0" layoutY="35.0" text="Nová požiadavka">
+        <font>
+            <Font name="System Bold" size="23.0"/>
+        </font>
+    </Label>
+
+    <Label alignment="CENTER_RIGHT" layoutX="60.0" layoutY="76.0" prefHeight="17.0" prefWidth="96.0" text="Dealmaker:"/>
+    <Label fx:id="dealmaker" layoutX="162.0" layoutY="77.0" text="Nie je dostupný :("/>
+    <AnchorPane fx:id="addPanel" layoutX="52.0" layoutY="85.0" prefHeight="249.0" prefWidth="344.0">
+        <Label alignment="CENTER_RIGHT" layoutX="7.0" layoutY="14.0" prefHeight="17.0" prefWidth="96.0" text="Názov:"/>
+        <TextField fx:id="project_name" layoutX="109.0" layoutY="14.0" prefHeight="25.0" prefWidth="160.0"
+                   promptText="Názov projektu"/>
+        <Label alignment="CENTER_RIGHT" layoutX="7.0" layoutY="51.0" prefHeight="17.0" prefWidth="96.0" text="Cena:"/>
+        <TextField fx:id="price" layoutX="108.0" layoutY="48.0" prefHeight="25.0" prefWidth="160.0"
+                   promptText="Navrhovaná cena"/>
+        <Label alignment="CENTER_RIGHT" layoutX="7.0" layoutY="87.0" prefHeight="17.0" prefWidth="96.0"
+               text="Typ požiadavky:"/>
+        <ChoiceBox fx:id="deal_type" layoutX="108.0" layoutY="84.0" onAction="#changeDeal" prefHeight="25.0"
+                   prefWidth="160.0"/>
+        <Label alignment="CENTER_RIGHT" layoutX="7.0" layoutY="128.0" prefHeight="17.0" prefWidth="96.0"
+               text="Počet produktov:"/>
+        <TextField fx:id="product_count" disable="true" layoutX="108.0" layoutY="124.0" prefHeight="25.0"
+                   prefWidth="160.0"/>
+        <Button fx:id="createButton" layoutX="109.0" layoutY="169.0" mnemonicParsing="false" onAction="#createDeal"
+                prefHeight="66.0" prefWidth="160.0" styleClass="big-btn" text="Odoslať" underline="true">
+            <font>
+                <Font name="System Bold" size="22.0"/>
+            </font>
+        </Button>
+    </AnchorPane>
+
+</AnchorPane>

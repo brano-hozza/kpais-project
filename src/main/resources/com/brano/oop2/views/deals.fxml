@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
+<AnchorPane prefHeight="659.0" prefWidth="986.0" styleClass="bg" xmlns="http://javafx.com/javafx/11.0.1"
+            xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.brano.oop2.controllers.DealsController">
+    <Button layoutX="33.0" layoutY="25.0" mnemonicParsing="false" onAction="#optionsToggle" styleClass="options-icon"/>
+    <Button fx:id="gotoUsersButton" layoutX="868.0" layoutY="25.0" mnemonicParsing="false" onAction="#goUsers"
+            styleClass="secondary" text="Zobraz užívateľov"/>
+    <Button fx:id="gotoTasksButton" layoutX="880.0" layoutY="62.0" mnemonicParsing="false" onAction="#goTasks"
+            styleClass="secondary" text="Zobraz úlohy"/>
+
+    <Label layoutX="440.0" layoutY="50.0" text="Zmluvy">
+        <font>
+            <Font size="33.0"/>
+        </font>
+    </Label>
+    <TableView fx:id="dealsTable" layoutX="101.0" layoutY="103.0" minWidth="-Infinity" prefHeight="200.0"
+               prefWidth="784.0">
+    </TableView>
+    <AnchorPane fx:id="dealmakerPanel" disable="true" layoutX="321.0" layoutY="301.0" prefHeight="38.0"
+                prefWidth="344.0">
+        <Label fx:id="teamManagerLabel" layoutX="38.0" layoutY="13.0" text="Manazer:"/>
+        <ChoiceBox fx:id="teamManagerChoiceBox" layoutX="97.0" layoutY="9.0" prefWidth="150.0"/>
+        <Button fx:id="updateManagerButton" layoutX="259.0" layoutY="9.0" mnemonicParsing="false"
+                onAction="#updateManager"
+                text="Update"/>
+    </AnchorPane>
+    <AnchorPane fx:id="adminPanel" disable="true" layoutX="101.0" layoutY="330.0" prefHeight="288.0" prefWidth="784.0">
+        <Label layoutX="318.0" layoutY="14.0" text="Upraviť zmluvu">
+            <font>
+                <Font size="22.0"/>
+            </font>
+        </Label>
+
+
+        <Label alignment="CENTER_RIGHT" layoutX="26.0" layoutY="62.0" prefHeight="17.0" prefWidth="60.0" text="ID:"/>
+        <Label fx:id="idLabel" layoutX="91.0" layoutY="62.0" prefHeight="17.0" prefWidth="150.0" text="some_id"/>
+        <Label alignment="CENTER_RIGHT" layoutX="26.0" layoutY="101.0" prefHeight="17.0" prefWidth="60.0"
+               text="Zákazník:"/>
+        <ChoiceBox fx:id="buyerChoiceBox" layoutX="91.0" layoutY="97.0" prefWidth="150.0"/>
+        <Label alignment="CENTER_RIGHT" layoutX="26.0" layoutY="142.0" text="Dealmaker:"/>
+        <ChoiceBox fx:id="dealmakerChoiceBox" layoutX="91.0" layoutY="138.0" prefWidth="150.0"/>
+
+
+        <Label alignment="CENTER_RIGHT" layoutX="248.0" layoutY="67.0" prefHeight="17.0" prefWidth="103.0"
+               text="Názov projektu:"/>
+        <TextField fx:id="projectNameTextField" layoutX="360.0" layoutY="63.0" prefHeight="25.0" prefWidth="174.0"
+                   promptText="Názov projektu"/>
+        <Label alignment="CENTER_RIGHT" layoutX="248.0" layoutY="101.0" prefHeight="17.0" prefWidth="103.0"
+               text="Typ:"/>
+        <ChoiceBox fx:id="dealTypeChoiceBox" layoutX="360.0" layoutY="97.0" prefHeight="25.0" prefWidth="174.0"/>
+        <Label layoutX="247.0" layoutY="142.0" text="Dátum objednávky:"/>
+        <DatePicker fx:id="datePicker" layoutX="360.0" layoutY="138.0"/>
+
+
+        <Label alignment="CENTER_RIGHT" layoutX="558.0" layoutY="67.0" prefHeight="17.0" prefWidth="91.0"
+               text="Cena (€):"/>
+        <TextField fx:id="priceTextField" layoutX="662.0" layoutY="63.0" prefHeight="25.0" prefWidth="91.0"
+                   promptText="Cena webu"/>
+        <Label layoutX="558.0" layoutY="101.0" text="Počet produktov:"/>
+        <TextField fx:id="productCountTextField" layoutX="662.0" layoutY="97.0" prefHeight="25.0" prefWidth="91.0"
+                   promptText="Počet produktov"/>
+
+
+        <Button fx:id="saveButton" layoutX="331.0" layoutY="242.0" mnemonicParsing="false" onAction="#update"
+                prefHeight="25.0" prefWidth="123.0" text="Save"/>
+    </AnchorPane>
+
+</AnchorPane>
