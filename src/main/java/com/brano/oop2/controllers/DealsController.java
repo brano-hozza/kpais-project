@@ -339,7 +339,7 @@ public class DealsController {
      *
      * @throws DAOExceptions.ModelNotFoundException Cant find current model
      */
-    public void update() throws DAOExceptions.ModelNotFoundException {
+    public void update() throws DAOExceptions.ModelNotFoundException, DAOExceptions.ModelSaveException {
         //split business logic to model
         DealEdit currentDealmaker = (DealEdit) App.activeUserModel;
         String productCount = productCountTextField.getText();
@@ -399,7 +399,7 @@ public class DealsController {
     /**
      * Function updates the manager to selected deal
      */
-    public void updateManager() throws DAOExceptions.ModelNotFoundException {
+    public void updateManager() throws DAOExceptions.ModelNotFoundException, DAOExceptions.ModelSaveException {
         TeamManager tm = teamManagerChoiceBox.getValue();
         tm.setProject(selectedDeal.getName());
         //userDAO.update(tm);

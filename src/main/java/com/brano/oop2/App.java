@@ -176,7 +176,9 @@ public class App extends Application {
      */
     @Override
     public void stop() throws Exception {
-        UserDAO.getInstance().update(App.activeUserModel);
+        if(App.activeUserModel != null) {
+            UserDAO.getInstance().update(App.activeUserModel);
+        }
         db.saveAll();
         super.stop();
 

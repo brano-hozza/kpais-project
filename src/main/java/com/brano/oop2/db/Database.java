@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 
 public class Database {
-    private final String tmpPath = "src/main/resources/com/brano/oop2/db/tmp/";
+    private final String tmpPath = "src/main/resources/com/brano/oop2/db/";
 
     LinkedHashMap<String, DAO<Model>> daos = new LinkedHashMap<>();
 
@@ -58,6 +58,7 @@ public class Database {
                 String[] fullPath = path.split("\\.");
                 File dir = new File(tmpPath);
                 if (!dir.exists()) dir.mkdir();
+                System.out.println(tmpPath + fullPath[fullPath.length - 1] + ".ser");
                 File file = new File(tmpPath + fullPath[fullPath.length - 1] + ".ser");
                 file.createNewFile();
                 FileOutputStream fileOut =
