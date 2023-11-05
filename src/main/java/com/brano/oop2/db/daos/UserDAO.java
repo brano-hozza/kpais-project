@@ -82,15 +82,6 @@ public class UserDAO implements DAO<UserModel> {
     }
 
     /**
-     * Function returns all the users
-     *
-     * @return ArrayList of users
-     */
-    public List<UserModel> getUsers() {
-        return userModels;
-    }
-
-    /**
      * Function checks if user entered valid credentials
      *
      * @param username Username

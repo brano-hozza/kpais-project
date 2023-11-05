@@ -39,7 +39,6 @@ public class App extends Application {
         GridPane gp = new GridPane();
         gp.getStyleClass().add("bg");
 
-
         Label label = new Label("Nastavenia");
         gp.addRow(0, label);
 

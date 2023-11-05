@@ -20,20 +20,24 @@ public class InputHelper {
         field.setText("0");
         field.textProperty().addListener((observable, oldValue, newValue) -> {
             if (!newValue.matches("[0-9]+")) {
-                field.setText(newValue.replaceAll("[^\\d.]", ""));
-                StringBuilder aus = new StringBuilder(newValue);
-                boolean firstPointFound = false;
-                for (int i = 0; i < aus.length(); i++) {
-                    if (aus.charAt(i) == '.') {
-                        if (!firstPointFound)
-                            firstPointFound = true;
-                        else
-                            aus.deleteCharAt(i);
-                    }
-                }
-                newValue = aus.toString();
+                formatNumber(field, newValue);
             }
         });
+    }
+
+    private static void formatNumber(TextField field, String newValue) {
+        field.setText(newValue.replaceAll("[^\\d.]", ""));
+        StringBuilder aus = new StringBuilder(newValue);
+        boolean firstPointFound = false;
+        for (int i = 0; i < aus.length(); i++) {
+            if (aus.charAt(i) == '.') {
+                if (!firstPointFound)
+                    firstPointFound = true;
+                else
+                    aus.deleteCharAt(i);
+            }
+        }
+        newValue = aus.toString();
     }
 
     /**
@@ -45,18 +49,7 @@ public class InputHelper {
         field.setText("0");
         field.textProperty().addListener((observable, oldValue, newValue) -> {
             if (!newValue.matches("[0-9]+(\\.[0-9]*)?")) {
-                field.setText(newValue.replaceAll("[^\\d.]", ""));
-                StringBuilder aus = new StringBuilder(newValue);
-                boolean firstPointFound = false;
-                for (int i = 0; i < aus.length(); i++) {
-                    if (aus.charAt(i) == '.') {
-                        if (!firstPointFound)
-                            firstPointFound = true;
-                        else
-                            aus.deleteCharAt(i);
-                    }
-                }
-                newValue = aus.toString();
+                formatNumber(field, newValue);
             }
         });
     }

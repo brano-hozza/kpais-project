@@ -2,18 +2,22 @@ package com.brano.oop2.controllers;
 
 import com.brano.oop2.App;
 import com.brano.oop2.db.daos.DAOExceptions;
-import com.brano.oop2.db.daos.DealDAO;
-import com.brano.oop2.db.daos.UserDAO;
 import com.brano.oop2.helpers.InputHelper;
 import com.brano.oop2.models.deals.DEAL_TYPE;
 import com.brano.oop2.models.deals.DealModel;
 import com.brano.oop2.models.deals.Eshop;
-import com.brano.oop2.models.users.*;
+import com.brano.oop2.models.users.Buyer;
+import com.brano.oop2.models.users.Dealmaker;
+import com.brano.oop2.models.users.ROLES;
+import com.brano.oop2.models.users.TeamManager;
 import com.brano.oop2.router.ROUTES;
 import com.brano.oop2.router.Router;
+import com.brano.oop2.services.DealService;
+import com.brano.oop2.services.UserService;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
@@ -62,12 +66,17 @@ public class DealsController {
     private TableView<DealModel> dealsTable;
 
     DealModel selectedDeal = null;
-    DealDAO dealDAO;
-    UserDAO userDAO;
+
+    Alert alert;
+
+    private final UserService userService;
+    private final DealService dealService;
 
     public DealsController() {
-        this.dealDAO = DealDAO.getInstance();
-        this.userDAO = UserDAO.getInstance();
+        this.alert = new Alert(Alert.AlertType.ERROR);
+
+        this.userService = UserService.getInstance();
+        this.dealService = DealService.getInstance();
     }
 
     /**
@@ -94,38 +103,42 @@ public class DealsController {
 
     }
 
+    private TableCell<DealModel, Void> createButtonCell() {
+        return new TableCell<>() {
+
+            private final Button btn = new Button("HOTOVO");
+
+            {
+                btn.setOnAction((ActionEvent event) -> completeProject());
+            }
+
+            @Override
+            public void updateItem(Void item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty || getTableRow() == null || getTableRow().getItem() == null) {
+                    setGraphic(null);
+                } else {
+                    var dm = (DealModel) getTableRow().getItem();
+                    if (!dm.getDone() || dm.isReturned()) {
+                        setGraphic(null);
+                    } else {
+                        setGraphic(btn);
+                    }
+                }
+            }
+        };
+    }
+
     /**
      * Adds complete button to deal
      */
     private void addCompleteButton() {
         TableColumn<DealModel, Void> edit = new TableColumn<>("Ukončiť projekt");
         edit.styleProperty().set("-fx-alignment: CENTER");
-        Callback<TableColumn<DealModel, Void>, TableCell<DealModel, Void>> cellFactory = new Callback<TableColumn<DealModel, Void>, TableCell<DealModel, Void>>() {
+        var cellFactory = new Callback<TableColumn<DealModel, Void>, TableCell<DealModel, Void>>() {
             @Override
             public TableCell<DealModel, Void> call(final TableColumn<DealModel, Void> param) {
-                return new TableCell<DealModel, Void>() {
-
-                    private final Button btn = new Button("HOTOVO");
-
-                    {
-                        btn.setOnAction((ActionEvent event) -> completeProject());
-                    }
-
-                    @Override
-                    public void updateItem(Void item, boolean empty) {
-                        super.updateItem(item, empty);
-                        if (empty || getTableRow() == null || getTableRow().getItem() == null) {
-                            setGraphic(null);
-                        } else {
-                            DealModel dm = (DealModel) getTableRow().getItem();
-                            if (!dm.getDone() || dm.isReturned()) {
-                                setGraphic(null);
-                            } else {
-                                setGraphic(btn);
-                            }
-                        }
-                    }
-                };
+                return createButtonCell();
             }
         };
         edit.setCellFactory(cellFactory);
@@ -150,7 +163,7 @@ public class DealsController {
     private void setupDealmakerPanel() {
         this.addSetProjectManagerColumn();
         this.teamManagerChoiceBox.setConverter(new InputHelper.UserConverter<>());
-        this.teamManagerChoiceBox.setItems(FXCollections.observableArrayList(userDAO.getAll(ROLES.TEAM_MANAGER)));
+        this.teamManagerChoiceBox.setItems(FXCollections.observableArrayList(this.userService.getUsers(ROLES.TEAM_MANAGER)));
     }
 
     /**
@@ -159,10 +172,10 @@ public class DealsController {
     private void addSetProjectManagerColumn() {
         TableColumn<DealModel, Void> edit = new TableColumn<>("Upravit");
         edit.styleProperty().set("-fx-alignment: CENTER");
-        Callback<TableColumn<DealModel, Void>, TableCell<DealModel, Void>> cellFactory = new Callback<TableColumn<DealModel, Void>, TableCell<DealModel, Void>>() {
+        var cellFactory = new Callback<TableColumn<DealModel, Void>, TableCell<DealModel, Void>>() {
             @Override
             public TableCell<DealModel, Void> call(final TableColumn<DealModel, Void> param) {
-                return new TableCell<DealModel, Void>() {
+                return new TableCell<>() {
 
                     private final Button btn = new Button("Nastav manazera");
 
@@ -176,7 +189,7 @@ public class DealsController {
                         if (empty || getTableRow() == null || getTableRow().getItem() == null) {
                             setGraphic(null);
                         } else {
-                            DealModel dm = (DealModel) getTableRow().getItem();
+                            var dm = (DealModel) getTableRow().getItem();
                             if (dm.getDone()) {
                                 setGraphic(null);
                             } else {
@@ -197,8 +210,8 @@ public class DealsController {
     private void setComboBox() {
         dealmakerChoiceBox.setConverter(new InputHelper.UserConverter<>());
         buyerChoiceBox.setConverter(new InputHelper.UserConverter<>());
-        dealmakerChoiceBox.setItems(FXCollections.observableArrayList(userDAO.getAvailableDealmakers()));
-        buyerChoiceBox.setItems(FXCollections.observableArrayList(userDAO.getAll(ROLES.BUYER)));
+        dealmakerChoiceBox.setItems(FXCollections.observableArrayList(this.userService.getAvailableDealmakers()));
+        buyerChoiceBox.setItems(FXCollections.observableArrayList(this.userService.getUsers(ROLES.BUYER)));
         if (selectedDeal != null) {
             dealmakerChoiceBox.setValue(selectedDeal.getDealmaker());
             buyerChoiceBox.setValue(selectedDeal.getBuyer());
@@ -209,23 +222,30 @@ public class DealsController {
      * Function that setups table rows
      */
     private void setupTable() {
-        TableColumn<DealModel, Integer> id = new TableColumn<>("ID");
+        var id = new TableColumn<DealModel, Integer>("ID");
         id.setCellValueFactory(new PropertyValueFactory<>("ID"));
-        TableColumn<DealModel, String> name = new TableColumn<>("Názov");
+
+        var name = new TableColumn<DealModel, String>("Názov");
         name.setCellValueFactory(new PropertyValueFactory<>("name"));
-        TableColumn<DealModel, String> buyer = new TableColumn<>("Zákazník");
+
+        var buyer = new TableColumn<DealModel, String>("Zákazník");
         buyer.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().getBuyer().getUsername()));
-        TableColumn<DealModel, String> dealmaker = new TableColumn<>("Dealmaker");
+
+        var dealmaker = new TableColumn<DealModel, String>("Dealmaker");
         dealmaker.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().getDealmaker().getUsername()));
-        TableColumn<DealModel, Double> price = new TableColumn<>("Cena");
+
+        var price = new TableColumn<DealModel, Double>("Cena");
         price.setCellValueFactory(new PropertyValueFactory<>("price"));
-        TableColumn<DealModel, String> date = new TableColumn<>("Dátum objednávky");
+
+        var date = new TableColumn<DealModel, String>("Dátum objednávky");
         date.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().getDate().toString()));
-        TableColumn<DealModel, Integer> product_count = new TableColumn<>("Počet produktov");
+
+        var product_count = new TableColumn<DealModel, Integer>("Počet produktov");
         product_count.setCellValueFactory(new PropertyValueFactory<>("productCount"));
-        TableColumn<DealModel, Boolean> project_done = new TableColumn<>("Kompletný");
+
+        var project_done = new TableColumn<DealModel, Boolean>("Kompletný");
         project_done.setCellValueFactory(new PropertyValueFactory<>("done"));
-        //noinspection unchecked
+
         dealsTable.getColumns().setAll(id, name, buyer, dealmaker, price, date, product_count, project_done);
         this.setTableData();
     }
@@ -235,10 +255,31 @@ public class DealsController {
      */
     private void setTableData() {
         if (App.activeUserModel.getRole() == ROLES.DEALMAKER)
-            dealsTable.setItems(FXCollections.observableArrayList(dealDAO.getAllFor((Dealmaker) App.activeUserModel)));
+            dealsTable.setItems(FXCollections.observableArrayList(dealService.getAllDealsFor((Dealmaker) App.activeUserModel)));
         else
-            dealsTable.setItems(FXCollections.observableArrayList(dealDAO.getAll()));
+            dealsTable.setItems(FXCollections.observableArrayList(dealService.getAllDeals()));
         dealsTable.refresh();
+    }
+
+    private EventHandler<ActionEvent> getUpdateEvent() {
+        return event -> {
+            System.out.println("Okay");
+            if (selectedDeal == null) {
+                return;
+            }
+            if (dealTypeChoiceBox.getValue() != DEAL_TYPE.ESHOP) {
+                productCountTextField.setDisable(true);
+                return;
+            }
+            productCountTextField.setDisable(false);
+
+            if (selectedDeal instanceof Eshop) {
+                productCountTextField.setText(String.valueOf(((Eshop) selectedDeal).getProductCount()));
+            } else {
+                productCountTextField.setText("0");
+            }
+
+        };
     }
 
     /**
@@ -248,21 +289,7 @@ public class DealsController {
         this.setComboBox();
         this.addUpdateButton();
         dealTypeChoiceBox.setItems(FXCollections.observableArrayList(DEAL_TYPE.values()));
-        dealTypeChoiceBox.setOnAction(event -> {
-            System.out.println("Okay");
-            if (selectedDeal != null) {
-                if (dealTypeChoiceBox.getValue() != DEAL_TYPE.ESHOP) {
-                    productCountTextField.setDisable(true);
-                } else {
-                    productCountTextField.setDisable(false);
-                    if (selectedDeal instanceof Eshop) {
-                        productCountTextField.setText(String.valueOf(((Eshop) selectedDeal).getProductCount()));
-                    } else {
-                        productCountTextField.setText("0");
-                    }
-                }
-            }
-        });
+        dealTypeChoiceBox.setOnAction(this.getUpdateEvent());
         InputHelper.fixPriceInput(priceTextField);
         InputHelper.fixCountInput(productCountTextField);
         adminPanel.setVisible(true);
@@ -274,10 +301,10 @@ public class DealsController {
     private void addUpdateButton() {
         TableColumn<DealModel, Void> edit = new TableColumn<>("Upraviť");
         edit.styleProperty().set("-fx-alignment: CENTER");
-        Callback<TableColumn<DealModel, Void>, TableCell<DealModel, Void>> cellFactory = new Callback<TableColumn<DealModel, Void>, TableCell<DealModel, Void>>() {
+        var cellFactory = new Callback<TableColumn<DealModel, Void>, TableCell<DealModel, Void>>() {
             @Override
             public TableCell<DealModel, Void> call(final TableColumn<DealModel, Void> param) {
-                return new TableCell<DealModel, Void>() {
+                return new TableCell<>() {
 
                     private final Button btn = new Button("Uprav");
 
@@ -341,11 +368,12 @@ public class DealsController {
      */
     public void update() throws DAOExceptions.ModelNotFoundException, DAOExceptions.ModelSaveException {
         //split business logic to model
-        DealEdit currentDealmaker = (DealEdit) App.activeUserModel;
+        var currentDealmaker = (Dealmaker) App.activeUserModel;
         String productCount = productCountTextField.getText();
-        int parsedProductCount = 0;
-        if (productCount.length() > 0) parsedProductCount = Integer.parseInt(productCount);
-        DealModel tempDeal = currentDealmaker.updateDeal(
+        int parsedProductCount = productCount.isEmpty() ? 0 : Integer.parseInt(productCount);
+
+        DealModel newDeal = this.dealService.updateDeal(
+                currentDealmaker,
                 dealTypeChoiceBox.getValue(),
                 Integer.parseInt(idLabel.getText()),
                 projectNameTextField.getText(),
@@ -354,19 +382,12 @@ public class DealsController {
                 Double.parseDouble(priceTextField.getText()),
                 Date.from(datePicker.getValue().atStartOfDay(ZoneId.systemDefault()).toInstant()),
                 parsedProductCount,
-                selectedDeal.getTeamManager()
-
+                selectedDeal
         );
-        if (tempDeal == null)
-            return;
-        if (selectedDeal.isReturned()) tempDeal.complete();
-        selectedDeal = tempDeal;
-        dealmakerChoiceBox.getValue().setAvailable(false);
-        dealDAO.update(selectedDeal);
-        userDAO.update(dealmakerChoiceBox.getValue());
+
         //update view
         this.setComboBox();
-        this.setDeal(selectedDeal);
+        this.setDeal(newDeal);
         this.setTableData();
         //Alert user about success
         Alert alert = new Alert(Alert.AlertType.INFORMATION);

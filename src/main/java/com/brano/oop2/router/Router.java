@@ -19,7 +19,7 @@ public class Router {
      * Function is used to replace context of current screen
      *
      * @param fxml Path to new fxml
-     * @throws Exception Exception if cannot read the path
+     * @throws Exception Exception if we cannot read the path
      */
     private static void replaceSceneContent(String fxml) throws Exception {
         Parent page = FXMLLoader.load(App.class.getResource(fxml));

@@ -2,11 +2,13 @@ package com.brano.oop2.controllers;
 
 import com.brano.oop2.App;
 import com.brano.oop2.db.daos.DAOExceptions;
-import com.brano.oop2.db.daos.UserDAO;
-import com.brano.oop2.models.deals.DealModel;
-import com.brano.oop2.models.users.*;
+import com.brano.oop2.models.users.Employee;
+import com.brano.oop2.models.users.ROLES;
+import com.brano.oop2.models.users.TeamPerson;
+import com.brano.oop2.models.users.UserModel;
 import com.brano.oop2.router.ROUTES;
 import com.brano.oop2.router.Router;
+import com.brano.oop2.services.UserService;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
@@ -24,36 +26,44 @@ public class UsersController {
     public AnchorPane updatePanel;
 
     @FXML
-    public Label id;
+    public Label idLabel;
     @FXML
-    public TextField username;
+    public TextField usernameField;
     @FXML
-    public CheckBox available;
+    public CheckBox availableField;
     @FXML
-    public ChoiceBox<ROLES> role;
+    public ChoiceBox<ROLES> roleField;
     @FXML
-    public Button saveBtn;
+    public Button saveButton;
     UserModel selectedUserModel;
-    UserDAO userDAO;
+
+    private final UserService userService;
     @FXML
     private TableView<UserModel> usersTable;
 
+    Alert alert;
+
 
     public UsersController() {
-        this.userDAO = UserDAO.getInstance();
+        this.alert = new Alert(Alert.AlertType.ERROR);
+        this.alert.setTitle("Chyba!");
+        this.userService = UserService.getInstance();
     }
 
     @FXML
     private void initialize() {
-        role.setItems(FXCollections.observableArrayList(ROLES.values()));
-        TableColumn<UserModel, Integer> id = new TableColumn<>("ID");
+        roleField.setItems(FXCollections.observableArrayList(ROLES.values()));
+        var id = new TableColumn<UserModel, Integer>("ID");
         id.setCellValueFactory(new PropertyValueFactory<>("ID"));
         id.getStyleClass().add("font");
-        TableColumn<UserModel, String> username = new TableColumn<>("Username");
+
+        var username = new TableColumn<UserModel, String>("Username");
         username.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().getUsername()));
-        TableColumn<UserModel, ROLES> role = new TableColumn<>("Rola");
+
+        var role = new TableColumn<UserModel, ROLES>("Rola");
         role.setCellValueFactory(data -> new SimpleObjectProperty<>(data.getValue().getRole()));
-        TableColumn<UserModel, Boolean> available = new TableColumn<>("Dostupný");
+
+        var available = new TableColumn<UserModel, Boolean>("Dostupný");
         available.setCellValueFactory(data -> {
             SimpleBooleanProperty ssb;
             ROLES mRole = data.getValue().getRole();
@@ -65,7 +75,8 @@ public class UsersController {
             return ssb;
         });
         available.setCellFactory(data -> new CheckBoxTableCell<>());
-        TableColumn<UserModel, String> project = new TableColumn<>("Názov projektu");
+
+        var project = new TableColumn<UserModel, String>("Názov projektu");
         project.setCellValueFactory(data -> {
             SimpleStringProperty ssp;
             ROLES mRole = data.getValue().getRole();
@@ -76,13 +87,13 @@ public class UsersController {
             }
             return ssp;
         });
-        TableColumn<UserModel, String> address = new TableColumn<>("Adresa");
+
+        var address = new TableColumn<UserModel, String>("Adresa");
         address.setCellValueFactory(new PropertyValueFactory<>("address"));
 
-        //noinspection unchecked
         usersTable.getColumns().setAll(id, username, role, available, project, address);
         this.addUpdateButton();
-        usersTable.setItems(FXCollections.observableArrayList(userDAO.getUsers()));
+        usersTable.setItems(FXCollections.observableArrayList(userService.getUsers()));
     }
 
     /**
@@ -91,10 +102,10 @@ public class UsersController {
     private void addUpdateButton() {
         TableColumn<UserModel, Void> edit = new TableColumn<>("Upraviť");
         edit.styleProperty().set("-fx-alignment: CENTER");
-        Callback<TableColumn<UserModel, Void>, TableCell<UserModel, Void>> cellFactory = new Callback<TableColumn<UserModel, Void>, TableCell<UserModel, Void>>() {
+        var cellFactory = new Callback<TableColumn<UserModel, Void>, TableCell<UserModel, Void>>() {
             @Override
             public TableCell<UserModel, Void> call(final TableColumn<UserModel, Void> param) {
-                return new TableCell<UserModel, Void>() {
+                return new TableCell<>() {
 
                     private final Button btn = new Button("Uprav");
 
@@ -126,85 +137,50 @@ public class UsersController {
      */
     private void setUser(UserModel userModel) {
         selectedUserModel = userModel;
-        id.setText(String.valueOf(userModel.getID()));
-        username.setText(userModel.getUsername());
+        idLabel.setText(String.valueOf(userModel.getID()));
+        usernameField.setText(userModel.getUsername());
         ROLES mRole = userModel.getRole();
         if (Employee.roles.contains(mRole)) {
-            available.setSelected(((Employee) userModel).isAvailable());
-            available.setDisable(false);
+            availableField.setSelected(((Employee) userModel).isAvailable());
+            availableField.setDisable(false);
         } else
-            available.setDisable(true);
-        role.setValue(userModel.getRole());
+            availableField.setDisable(true);
+        roleField.setValue(userModel.getRole());
         updatePanel.setDisable(false);
 
     }
+
+
 
     /**
      * Updates the current user
      */
     public void update() {
-        Alert alert = new Alert(Alert.AlertType.ERROR);
-        alert.setTitle("Chyba!");
-        if (username.getText().length() < 5) {
-            alert.setHeaderText("Meno užívateľa musí mať aspoň 5 znakov!");
-            alert.show();
-            return;
-        }
-        if (!selectedUserModel.getUsername().equals(username.getText()) && userDAO.get(username.getText()) != null) {
-            alert.setHeaderText("Meno užívateľa musí byť jedinečné!");
+        var result = this.userService.validateUser(usernameField.getText(), selectedUserModel);
+        if(result != null){
+            alert.setHeaderText(result);
             alert.show();
             return;
         }
         String[] address = selectedUserModel.getAddress().split("~");
         //BUYER
         try {
-            if (role.getValue() == ROLES.BUYER) {
-                DealModel deal = null;
-                if (selectedUserModel instanceof Buyer)
-                    deal = ((Buyer) selectedUserModel).getDeal();
-                Buyer buyer = new Buyer(selectedUserModel.getID(), username.getText(), selectedUserModel.getPassword(), deal);
-                buyer.setAddress(address[0], address[1], Integer.parseInt(address[2]));
-                userDAO.update(buyer);
-            }
-            //DEALMAKER
-            if (role.getValue() == ROLES.DEALMAKER) {
-                String deal = "";
-                boolean userAvailable = true;
-                if (selectedUserModel instanceof Dealmaker)
-                    deal = ((Dealmaker) selectedUserModel).getDeal();
-                if (selectedUserModel instanceof Employee)
-                    userAvailable = ((Employee) selectedUserModel).isAvailable();
-                Dealmaker dm = new Dealmaker(selectedUserModel.getID(), username.getText(), selectedUserModel.getPassword(), userAvailable, deal);
-                dm.setAvailable(available.isSelected());
-                dm.setAddress(address[0], address[1], Integer.parseInt(address[2]));
-                userDAO.update(dm);
-            }
-            //ADMIN
-            if (role.getValue() == ROLES.ADMIN) {
-                Admin admin = new Admin(selectedUserModel.getID(), username.getText(), selectedUserModel.getPassword());
-                admin.setAddress(address[0], address[1], Integer.parseInt(address[2]));
-                userDAO.update(admin);
-            }
-            //DEVELOPER
-            if (role.getValue() == ROLES.DEVELOPER) {
-                String project = "";
-                if (selectedUserModel instanceof TeamPerson)
-                    project = ((TeamPerson) selectedUserModel).getProject();
-                String type = "FE";
-                if (selectedUserModel instanceof Developer)
-                    type = ((Developer) selectedUserModel).getType();
-                Developer developer = new Developer(selectedUserModel.getID(), username.getText(), selectedUserModel.getPassword(), available.isSelected(), project, type);
-                developer.setAddress(address[0], address[1], Integer.parseInt(address[2]));
-                userDAO.update(developer);
-            }
-            //TEAM MANAGER
-            if (role.getValue() == ROLES.TEAM_MANAGER) {
-                String project = "";
-                if (selectedUserModel instanceof TeamPerson)
-                    project = ((TeamPerson) selectedUserModel).getProject();
-                TeamManager tm = new TeamManager(selectedUserModel.getID(), username.getText(), selectedUserModel.getPassword(), available.isSelected(), project);
-                tm.setAddress(address[0], address[1], Integer.parseInt(address[2]));
-                userDAO.update(tm);
+            switch (roleField.getValue()){
+                case BUYER:
+                    this.userService.updateBuyer(selectedUserModel, usernameField.getText(), address);
+                    break;
+                case DEALMAKER:
+                    this.userService.updateDealmaker(selectedUserModel, usernameField.getText(), address, availableField.isSelected() );
+                    break;
+                case ADMIN:
+                    this.userService.updateAdmin(selectedUserModel, usernameField.getText(), address);
+                    break;
+                case DEVELOPER:
+                    this.userService.updateDeveloper(selectedUserModel, usernameField.getText(), address, availableField.isSelected());
+                    break;
+                case TEAM_MANAGER:
+                    this.userService.updateTeamManager(selectedUserModel, usernameField.getText(), address, availableField.isSelected());
+                    break;
             }
         } catch (DAOExceptions.ModelSaveException e) {
             alert.setHeaderText("Nepodarilo sa upraviť užívateľa!");
@@ -212,7 +188,7 @@ public class UsersController {
             System.out.println(e);
             return;
         }
-        usersTable.setItems(FXCollections.observableArrayList(userDAO.getAll()));
+        usersTable.setItems(FXCollections.observableArrayList(userService.getUsers()));
         usersTable.refresh();
         alert.setTitle("Úspech!");
         alert.setAlertType(Alert.AlertType.INFORMATION);
@@ -245,6 +221,6 @@ public class UsersController {
      * This is called when role is changed in choice box
      */
     public void changeRole() {
-        this.available.setDisable(this.role.getValue() != ROLES.DEALMAKER);
+        this.availableField.setDisable(this.roleField.getValue() != ROLES.DEALMAKER);
     }
 }
